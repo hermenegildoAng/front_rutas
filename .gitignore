@@ -1,0 +1,57 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencias
+node_modules/
+
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Producción / Builds
+dist
+dist-ssr
+coverage
+*.local
+
+# ==========================================
+# VARIABLES DE ENTORNO (¡Añadido para seguridad!)
+# ==========================================
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+!.env.example
+
+# Directorios de Editores (VS Code / WebStorm)
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript
+*.tsbuildinfo
+
+# Herramientas de Calidad (ESLint)
+.eslintcache
+
+# Testing (Cypress / Vitest)
+/cypress/videos/
+/cypress/screenshots/
+__screenshots__/
+
+# Vite temporal files
+*.timestamp-*-*.mjs
+.vite

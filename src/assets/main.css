@@ -1,0 +1,16 @@
+/* Nueva sintaxis de Tailwind v4 */
+@import 'tailwindcss';
+
+/* Aquí configuramos tus colores morados y la fuente en v4 */
+@theme {
+  --font-sans: 'Inter', sans-serif;
+
+  --color-brand-light: #f3e8ff;
+  --color-brand: #6b21a8;
+  --color-brand-dark: #581c87;
+}
+
+body {
+  background-color: #fcfcfc;
+  font-family: 'Inter', sans-serif;
+}
