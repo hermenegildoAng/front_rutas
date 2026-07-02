@@ -76,7 +76,7 @@
               v-if="vistaActual === 'perfil'"
               class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm"
             >
-              <p class="text-gray-600">Aquí irá el formulario para cambiar contraseña.</p>
+              <PerfilComponent />
             </div>
           </div>
         </Transition>
@@ -94,6 +94,7 @@ import CapturaRutaComponent from '../components/CapturaRutaComponent.vue'
 import AdminAgenciasComponent from '../components/AdminAgenciasComponent.vue'
 import { ChevronRight as ChevronRightIcon } from 'lucide-vue-next'
 import InventarioRutasComponent from '../components/InventarioRutasComponent.vue'
+import PerfilComponent from '../components/PerfilComponent.vue'
 
 const rol = ref(localStorage.getItem('user-rol') || 'consultor')
 const vistaActual = ref('rutas')

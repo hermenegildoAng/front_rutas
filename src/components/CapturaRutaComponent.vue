@@ -74,8 +74,16 @@
             </select>
             <input v-else v-model="form[campo.key]" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
           </div>
-          <label class="block text-xs font-semibold text-gray-500 mb-1">Duración de la ruta (minutos)</label>
-          <input type="number" name="duracion_ruta" id="duracion_ruta" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1">Duración de ruta (minutos)</label>
+            <input
+              v-model.number="form.duracion_ruta"
+              type="number"
+              min="1"
+              placeholder="Ej. 45"
+              class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
         </div>
 
         <!-- PASO 2: HORARIOS -->
@@ -193,6 +201,171 @@
             </template>
           </div>
           <div v-if="form.paradas.length === 0" class="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 rounded-2xl">No hay paradas. Usa "En mapa" o "+ Manual".</div>
+        </div>
+
+        <!-- PASO 4: VIAJE DE REGRESO -->
+        <div v-if="pasoActual === 3" class="space-y-5">
+          <h3 class="font-semibold text-gray-700">Viaje de regreso</h3>
+
+          <div class="flex items-center justify-between gap-3 p-4 rounded-2xl border border-gray-200 bg-gray-50">
+            <span class="text-sm font-medium text-gray-700">La ruta tiene viaje de regreso</span>
+            <button
+              type="button"
+              @click="form.viaje_regreso.tiene_viaje_regreso = !form.viaje_regreso.tiene_viaje_regreso"
+              :class="form.viaje_regreso.tiene_viaje_regreso ? 'bg-brand' : 'bg-gray-300'"
+              class="relative w-11 h-6 rounded-full transition-colors shrink-0"
+            >
+              <span
+                :class="form.viaje_regreso.tiene_viaje_regreso ? 'translate-x-5' : 'translate-x-0.5'"
+                class="absolute top-0.5 left-0 w-5 h-5 bg-white rounded-full shadow transition-transform"
+              />
+            </button>
+          </div>
+
+          <template v-if="form.viaje_regreso.tiene_viaje_regreso">
+            <!-- Horarios de regreso -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-3 p-4 rounded-2xl border border-gray-200 bg-gray-50">
+                <span class="text-sm font-medium text-gray-700">¿Utiliza los mismos horarios?</span>
+                <button
+                  type="button"
+                  @click="toggleMismosHorarios"
+                  :class="form.viaje_regreso.mismos_horarios ? 'bg-brand' : 'bg-gray-300'"
+                  class="relative w-11 h-6 rounded-full transition-colors shrink-0"
+                >
+                  <span
+                    :class="form.viaje_regreso.mismos_horarios ? 'translate-x-5' : 'translate-x-0.5'"
+                    class="absolute top-0.5 left-0 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                  />
+                </button>
+              </div>
+
+              <div v-if="!form.viaje_regreso.mismos_horarios" class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-semibold text-gray-600">Horarios de regreso</h4>
+                  <button @click="agregarCalendarioRegreso" class="px-3 py-2 rounded-xl bg-brand text-white text-sm hover:opacity-90 shadow-sm">+ Agregar horario</button>
+                </div>
+                <div class="space-y-5">
+                  <div v-for="(cal, calIndex) in form.viaje_regreso.calendarios" :key="'regreso-cal-' + calIndex" class="relative border border-gray-200 rounded-2xl bg-gray-50 overflow-hidden">
+                    <div class="flex items-center justify-between px-4 pt-4 pb-2">
+                      <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">{{ calIndex + 1 }}</span>
+                        <input v-model="cal.nombre" placeholder="Nombre del horario (ej. Entre semana)" class="text-sm font-semibold text-gray-700 bg-transparent border-b border-dashed border-gray-300 outline-none focus:border-brand px-1 py-0.5 w-48"/>
+                      </div>
+                      <button @click="eliminarCalendarioRegreso(calIndex)" class="text-gray-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 text-sm font-medium transition-colors">✕ Eliminar</button>
+                    </div>
+                    <div class="px-4 pb-3 grid grid-cols-2 gap-2">
+                      <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Fecha Inicial</label>
+                        <input type="date" v-model="cal.fecha_inicial" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Fecha Final</label>
+                        <input type="date" v-model="cal.fecha_final" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                      </div>
+                    </div>
+                    <div class="px-4 pb-3">
+                      <label class="block text-xs font-semibold text-gray-500 mb-2">¿Qué días aplica?</label>
+                      <div class="flex flex-wrap gap-1">
+                        <button v-for="dia in diasSemana" :key="'regreso-dia-' + calIndex + '-' + dia.key" @click="cal[dia.key] = !cal[dia.key]"
+                          :class="cal[dia.key] ? 'bg-brand text-white border-brand' : 'bg-white text-gray-500 border-gray-200 hover:border-brand hover:text-brand'"
+                          class="px-2.5 py-1 rounded-lg border text-xs font-semibold transition-all duration-150 select-none cursor-pointer">
+                          {{ dia.short }}
+                        </button>
+                      </div>
+                    </div>
+                    <div class="mx-4 border-t border-dashed border-gray-200 mb-3"></div>
+                    <div class="px-4 pb-3 space-y-3">
+                      <div class="flex items-center justify-between">
+                        <label class="text-xs font-semibold text-gray-500">Bloques de frecuencia</label>
+                        <button @click="agregarBloqueFrecuenciaRegreso(calIndex)" class="text-xs px-2.5 py-1.5 rounded-lg bg-purple-50 text-brand hover:bg-brand hover:text-white transition-all font-medium">+ Agregar bloque</button>
+                      </div>
+                      <div v-if="cal.bloques.length === 0" class="text-center py-4 text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl">Sin bloques de frecuencia.</div>
+                      <div v-for="(bloque, bloqueIndex) in cal.bloques" :key="'regreso-bloque-' + calIndex + '-' + bloqueIndex" class="bg-white border border-gray-200 rounded-xl p-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <span class="text-xs font-bold text-brand">Bloque {{ letraBloque(bloqueIndex) }}</span>
+                          <button @click="eliminarBloqueFrecuenciaRegreso(calIndex, bloqueIndex)" class="text-gray-300 hover:text-red-400 text-xs transition-colors">✕</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                          <div>
+                            <label class="block text-[10px] font-semibold text-gray-400 mb-1">Desde</label>
+                            <input type="time" v-model="bloque.desde" class="w-full px-2 py-2 rounded-lg border border-gray-200 bg-gray-50 text-xs outline-none focus:ring-2 focus:ring-purple-400"/>
+                          </div>
+                          <div>
+                            <label class="block text-[10px] font-semibold text-gray-400 mb-1">Hasta</label>
+                            <input type="time" v-model="bloque.hasta" class="w-full px-2 py-2 rounded-lg border border-gray-200 bg-gray-50 text-xs outline-none focus:ring-2 focus:ring-purple-400"/>
+                          </div>
+                          <div>
+                            <label class="block text-[10px] font-semibold text-gray-400 mb-1">Cada (min)</label>
+                            <input type="number" v-model="bloque.intervalo" min="1" placeholder="10" class="w-full px-2 py-2 rounded-lg border border-gray-200 bg-gray-50 text-xs outline-none focus:ring-2 focus:ring-purple-400"/>
+                          </div>
+                        </div>
+                        <p v-if="bloque.desde && bloque.hasta && bloque.intervalo" class="text-[10px] text-gray-400 mt-1">
+                          🕐 De {{ formatHora(bloque.desde) }} a {{ formatHora(bloque.hasta) }}, cada {{ bloque.intervalo }} min.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="form.viaje_regreso.calendarios.length === 0" class="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 rounded-2xl">No hay horarios de regreso. Agrega uno con el botón de arriba.</div>
+              </div>
+            </div>
+
+            <!-- Paradas de regreso -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-3 p-4 rounded-2xl border border-gray-200 bg-gray-50">
+                <span class="text-sm font-medium text-gray-700">¿Utiliza las mismas paradas?</span>
+                <button
+                  type="button"
+                  @click="toggleMismasParadas"
+                  :class="form.viaje_regreso.mismas_paradas ? 'bg-brand' : 'bg-gray-300'"
+                  class="relative w-11 h-6 rounded-full transition-colors shrink-0"
+                >
+                  <span
+                    :class="form.viaje_regreso.mismas_paradas ? 'translate-x-5' : 'translate-x-0.5'"
+                    class="absolute top-0.5 left-0 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                  />
+                </button>
+              </div>
+
+              <div v-if="!form.viaje_regreso.mismas_paradas" class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-semibold text-gray-600">Paradas de regreso</h4>
+                  <button @click="agregarParadaRegreso('', '')" class="px-3 py-2 rounded-xl bg-purple-50 text-brand text-sm hover:bg-brand hover:text-white shadow-sm">+ Agregar parada</button>
+                </div>
+                <div class="space-y-4">
+                  <template v-for="(parada, index) in form.viaje_regreso.paradas" :key="'regreso-parada-' + index">
+                    <div class="relative border border-gray-200 rounded-2xl p-4 bg-gray-50 space-y-4 pt-10">
+                      <button @click="eliminarParadaRegreso(index)" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 text-sm font-medium">✕ Eliminar</button>
+                      <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">{{ parada.orden_parada }}</span>
+                        <h4 class="font-semibold text-sm text-gray-700">Parada #{{ parada.orden_parada }}</h4>
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Folio Parada</label>
+                        <input v-model="parada.folio_parada" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Nombre Parada</label>
+                        <input v-model="parada.nombre_parada" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                      </div>
+                      <div class="grid grid-cols-2 gap-2">
+                        <div>
+                          <label class="block text-xs font-semibold text-gray-500 mb-1">Latitud</label>
+                          <input v-model="parada.latitud" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                        </div>
+                        <div>
+                          <label class="block text-xs font-semibold text-gray-500 mb-1">Longitud</label>
+                          <input v-model="parada.longitud" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-purple-500"/>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div v-if="form.viaje_regreso.paradas.length === 0" class="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 rounded-2xl">No hay paradas de regreso. Agrega una con el botón de arriba.</div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -370,7 +543,7 @@ let map = null
 const mapaCargando = ref(true)
 
 const pasoActual = ref(0)
-const pasos = ['general', 'calendarios', 'paradas']
+const pasos = ['general', 'calendarios', 'paradas', 'viaje_regreso']
 const modoActivo = ref(null)
 
 // UI toggles
@@ -399,9 +572,16 @@ const form = ref({
   nombre_largo: '',
   agencia: '',
   tipo_ruta: '',
-  duracion_ruta:'',
+  duracion_ruta: null,
   calendarios: [],
   paradas: [],
+  viaje_regreso: {
+    tiene_viaje_regreso: false,
+    mismos_horarios: true,
+    calendarios: [],
+    mismas_paradas: true,
+    paradas: [],
+  },
 })
 
 const camposGenerales = [
@@ -549,6 +729,46 @@ const agregarCalendario        = ()              => { form.value.calendarios.pus
 const eliminarCalendario       = (i)             => { form.value.calendarios.splice(i, 1) }
 const agregarBloqueFrecuencia  = (ci)            => { form.value.calendarios[ci].bloques.push(nuevoBloque()) }
 const eliminarBloqueFrecuencia = (ci, bi)        => { form.value.calendarios[ci].bloques.splice(bi, 1) }
+
+const clonarCalendarios = (calendarios) => JSON.parse(JSON.stringify(calendarios))
+const clonarParadas = (paradas) => paradas.map((p) => ({ ...p }))
+
+const toggleMismosHorarios = () => {
+  const regreso = form.value.viaje_regreso
+  regreso.mismos_horarios = !regreso.mismos_horarios
+  if (!regreso.mismos_horarios && regreso.calendarios.length === 0) {
+    regreso.calendarios = clonarCalendarios(form.value.calendarios)
+  }
+}
+
+const toggleMismasParadas = () => {
+  const regreso = form.value.viaje_regreso
+  regreso.mismas_paradas = !regreso.mismas_paradas
+  if (!regreso.mismas_paradas && regreso.paradas.length === 0) {
+    regreso.paradas = clonarParadas(form.value.paradas)
+  }
+}
+
+const agregarCalendarioRegreso        = ()       => { form.value.viaje_regreso.calendarios.push(nuevoCalendario()) }
+const eliminarCalendarioRegreso       = (i)      => { form.value.viaje_regreso.calendarios.splice(i, 1) }
+const agregarBloqueFrecuenciaRegreso  = (ci)     => { form.value.viaje_regreso.calendarios[ci].bloques.push(nuevoBloque()) }
+const eliminarBloqueFrecuenciaRegreso = (ci, bi) => { form.value.viaje_regreso.calendarios[ci].bloques.splice(bi, 1) }
+
+const agregarParadaRegreso = (lat = '', lng = '') => {
+  const orden = form.value.viaje_regreso.paradas.length + 1
+  form.value.viaje_regreso.paradas.push({
+    folio_parada: '',
+    nombre_parada: `Parada ${orden}`,
+    latitud: lat,
+    longitud: lng,
+    orden_parada: orden,
+  })
+}
+
+const eliminarParadaRegreso = (index) => {
+  form.value.viaje_regreso.paradas.splice(index, 1)
+  form.value.viaje_regreso.paradas.forEach((p, i) => { p.orden_parada = i + 1 })
+}
 
 // ========================= ARCHIVO =========================
 const validarExtension = (nombreArchivo) => {
@@ -748,7 +968,28 @@ const procesarArchivo = async () => {
 
 // ========================= GUARDAR =========================
 const handleGuardarRuta = () => {
-  const payload = { ...form.value, geometria_linea: puntosRuta.value.filter((p) => p.lat && p.lng) }
+  const { viaje_regreso, ...restoForm } = form.value
+
+  const payload = {
+    ...restoForm,
+    geometria_linea: puntosRuta.value.filter((p) => p.lat && p.lng),
+    viaje_regreso: viaje_regreso.tiene_viaje_regreso
+      ? {
+          tiene_viaje_regreso: true,
+          mismos_horarios: viaje_regreso.mismos_horarios,
+          calendarios: viaje_regreso.mismos_horarios
+            ? form.value.calendarios
+            : viaje_regreso.calendarios,
+          mismas_paradas: viaje_regreso.mismas_paradas,
+          paradas: viaje_regreso.mismas_paradas
+            ? form.value.paradas
+            : viaje_regreso.paradas,
+        }
+      : {
+          tiene_viaje_regreso: false,
+        },
+  }
+
   console.log(payload)
   alert('ejemplo guardar')
 }
