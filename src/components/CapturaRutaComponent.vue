@@ -123,7 +123,7 @@ let marcadoresPuntos = []
 
 const puntosRuta = ref([])
 
-// El objeto del formulario unificado
+// Busca esto en tu CapturaRutaComponent.vue y agrégale los campos de tarifa:
 const form = ref({
   folio: '',
   nombre_corto: '',
@@ -131,6 +131,11 @@ const form = ref({
   agencia: '',
   tipo_ruta: '',
   duracion_ruta: null,
+  
+  
+  tarifa_base: null,
+  moneda: 'MXN', 
+  
   calendarios: [],
   paradas: [],
   viaje_regreso: {
@@ -262,6 +267,6 @@ const handleGuardarRuta = () => {
   }
 
   console.log('Payload GTFS Listo:', payload)
-  alert('¡Estructura de la ruta procesada correctamente!')
+  alert('¡ejemplo datos !')
 }
 </script>
