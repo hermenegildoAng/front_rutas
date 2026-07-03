@@ -53,7 +53,7 @@ const cambiarPassword = async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-6 space-y-6 bg-gray-50/50 min-h-screen rounded-xl">
+  <div class="w-full mx-auto p-6 space-y-6 bg-gray-50/50 min-h-screen rounded-xl">
     <div>
       <h1 class="text-2xl font-bold text-gray-800">Mi Perfil</h1>
       <p class="text-sm text-gray-500">Administra tus datos de usuario y seguridad de la cuenta.</p>
@@ -61,35 +61,36 @@ const cambiarPassword = async () => {
 
     <hr class="border-gray-200" />
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="md:col-span-1 space-y-4 bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-fit">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      
+      <div class="lg:col-span-1 space-y-4 bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-fit">
         <div class="flex flex-col items-center text-center space-y-2 pb-4 border-b border-gray-100">
-          <div class="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold uppercase shadow-md shadow-purple-200">
+          <div class="w-16 h-16 bg-[#6b21a8] text-white rounded-full flex items-center justify-center text-2xl font-bold uppercase shadow-md shadow-purple-900/20">
             {{ usuario[0] }}
           </div>
           <div>
             <h2 class="font-semibold text-gray-800">{{ usuario }}</h2>
-            <p class="text-xs text-purple-600 font-semibold tracking-wider uppercase">Administrador</p>
+            <p class="text-xs text-[#6b21a8] font-bold tracking-wider uppercase">Administrador</p>
           </div>
         </div>
 
         <div class="space-y-3 pt-2">
           <div>
             <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Usuario</label>
-            <p class="text-sm font-medium text-gray-700 bg-purple-50/50 border border-purple-100 px-3 py-2 rounded-lg mt-1 select-all">
+            <p class="text-sm font-medium text-gray-700 bg-purple-50/30 border border-purple-100/70 px-3 py-2 rounded-lg mt-1 select-all">
               {{ usuario }}
             </p>
           </div>
           <div>
             <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Correo Electrónico</label>
-            <p class="text-sm font-medium text-gray-700 bg-purple-50/50 border border-purple-100 px-3 py-2 rounded-lg mt-1 select-all overflow-hidden text-ellipsis">
+            <p class="text-sm font-medium text-gray-700 bg-purple-50/30 border border-purple-100/70 px-3 py-2 rounded-lg mt-1 select-all overflow-hidden text-ellipsis">
               {{ correo }}
             </p>
           </div>
         </div>
       </div>
 
-      <div class="md:col-span-2 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+      <div class="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Actualizar Contraseña</h3>
         
         <div v-if="mensajeExito" class="mb-4 p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-lg">
@@ -105,7 +106,7 @@ const cambiarPassword = async () => {
             <input 
               v-model="passwordActual" 
               type="password" 
-              class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+              class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-[#6b21a8] focus:border-transparent outline-none transition"
               placeholder="••••••••"
               :disabled="cargando"
             />
@@ -117,7 +118,7 @@ const cambiarPassword = async () => {
               <input 
                 v-model="passwordNueva" 
                 type="password" 
-                class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-[#6b21a8] focus:border-transparent outline-none transition"
                 placeholder="Mínimo 8 caracteres"
                 :disabled="cargando"
               />
@@ -127,7 +128,7 @@ const cambiarPassword = async () => {
               <input 
                 v-model="passwordConfirmar" 
                 type="password" 
-                class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-[#6b21a8] focus:border-transparent outline-none transition"
                 placeholder="Repite la contraseña"
                 :disabled="cargando"
               />
@@ -138,7 +139,7 @@ const cambiarPassword = async () => {
             <button 
               type="submit" 
               :disabled="cargando"
-              class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg text-sm transition shadow-md shadow-purple-100 hover:shadow-lg focus:ring-2 focus:ring-purple-400 outline-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              class="px-5 py-2.5 bg-[#6b21a8] hover:bg-[#581c87] text-white font-medium rounded-lg text-sm transition shadow-md shadow-purple-900/10 hover:shadow-lg focus:ring-2 focus:ring-[#a855f7] outline-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
               <span v-if="cargando">Actualizando...</span>
               <span v-else>Guardar Cambios</span>
@@ -146,6 +147,7 @@ const cambiarPassword = async () => {
           </div>
         </form>
       </div>
+      
     </div>
   </div>
 </template>
