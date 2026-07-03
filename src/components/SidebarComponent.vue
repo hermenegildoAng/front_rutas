@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import logoUrl from '@/assets/logo.jpg'
+import logoUrl from '@/assets/logo.jpeg'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
