@@ -6,7 +6,7 @@
       <div
         class="w-full h-12 bg-brand-light rounded-xl border border-brand/20 flex items-center justify-center text-brand font-semibold text-xs px-2 text-center mb-8"
       >
-        <img src="./public/logo.jpg" alt="" />
+        <img src="/logo.jpg" alt="" />
       </div>
 
       <!-- Info de ussuario
