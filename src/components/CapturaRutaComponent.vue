@@ -64,14 +64,40 @@
     </div>
 
     <div class="absolute top-4 right-14 mr-8 z-20 w-72 flex flex-col gap-2">
-      <BuscadorArchivoRuta @puntos-cargados="manejarPuntosDesdeArchivo" />
-        
-      <PanelPuntosRuta 
-        v-model="puntosRuta" 
-        :modo-activo="modoActivo"
-        @toggle-modo="activarModo"
-        @borrar-trazo="borrarTrazo"
-      />
+        <button
+        v-if="!panelDerechoVisible"
+        @click="panelDerechoVisible = true"
+        class="absolute top-4 right-4 z-30 w-10 h-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/40 flex items-center justify-center text-[#6b21a8] hover:bg-[#6b21a8] hover:text-white transition-all"
+        title="Mostrar herramientas"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+        </svg>
+      </button>
+
+      <div 
+        v-if="panelDerechoVisible" 
+        class="absolute top-4 right-4 z-20 w-72 flex flex-col gap-2 max-h-[calc(100vh-122px)]"
+      >
+        <div class="flex justify-end bg-white/85 backdrop-blur-md p-1 rounded-xl border border-gray-100/50 shadow-sm">
+          <button 
+            @click="panelDerechoVisible = false" 
+            class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-100 transition-all font-medium"
+          >
+            Ocultar panel ✕
+          </button>
+        </div>
+
+        <BuscadorArchivoRuta @puntos-cargados="manejarPuntosDesdeArchivo" />
+          
+        <PanelPuntosRuta 
+          v-model="puntosRuta" 
+          :modo-activo="modoActivo"
+          @toggle-modo="activarModo"
+          @borrar-trazo="borrarTrazo"
+          class="overflow-y-auto flex-1"
+        />
+      </div>
     </div>
 
   </div>
@@ -115,6 +141,7 @@ const pasoActual = ref(0)
 const pasos = ['general', 'calendarios', 'paradas', 'viaje_regreso']
 const modoActivo = ref(null)
 const formularioVisible = ref(true)
+const panelDerechoVisible = ref(true)   
 
 // Capas de Leaflet
 let polylineRuta = null
