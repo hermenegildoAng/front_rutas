@@ -4,7 +4,7 @@
     <div class="absolute inset-0 z-0">
       <div class="w-full h-full bg-[#e5e3df] relative overflow-hidden">
         <div ref="mapContainer" class="w-full h-full cursor-crosshair"></div>
-        
+
         <div v-if="mapaCargando" class="absolute inset-0 z-40 bg-white/90 flex flex-col items-center justify-center">
           <div class="w-10 h-10 border-4 border-purple-200 border-t-brand rounded-full animate-spin"/>
           <p class="text-sm mt-4 text-gray-500">Cargando mapa...</p>
@@ -75,13 +75,13 @@
         </svg>
       </button>
 
-      <div 
-        v-if="panelDerechoVisible" 
+      <div
+        v-if="panelDerechoVisible"
         class="absolute top-4 right-4 z-20 w-72 flex flex-col gap-2 max-h-[calc(100vh-122px)]"
       >
         <div class="flex justify-end bg-white/85 backdrop-blur-md p-1 rounded-xl border border-gray-100/50 shadow-sm">
-          <button 
-            @click="panelDerechoVisible = false" 
+          <button
+            @click="panelDerechoVisible = false"
             class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-100 transition-all font-medium"
           >
             Ocultar panel ✕
@@ -89,9 +89,9 @@
         </div>
 
         <BuscadorArchivoRuta @puntos-cargados="manejarPuntosDesdeArchivo" />
-          
-        <PanelPuntosRuta 
-          v-model="puntosRuta" 
+
+        <PanelPuntosRuta
+          v-model="puntosRuta"
           :modo-activo="modoActivo"
           @toggle-modo="activarModo"
           @borrar-trazo="borrarTrazo"
@@ -141,7 +141,7 @@ const pasoActual = ref(0)
 const pasos = ['general', 'calendarios', 'paradas', 'viaje_regreso']
 const modoActivo = ref(null)
 const formularioVisible = ref(true)
-const panelDerechoVisible = ref(true)   
+const panelDerechoVisible = ref(true)
 
 // Capas de Leaflet
 let polylineRuta = null
@@ -158,11 +158,11 @@ const form = ref({
   agencia: '',
   tipo_ruta: '',
   duracion_ruta: null,
-  
-  
+
+
   tarifa_base: null,
-  moneda: 'MXN', 
-  
+  moneda: 'MXN',
+
   calendarios: [],
   paradas: [],
   viaje_regreso: {
@@ -261,9 +261,9 @@ const agregarParadaDesdeMapa = (lat = '', lng = '') => {
   const orden = form.value.paradas.length + 1
   form.value.paradas.push({ folio_parada: '', nombre_parada: `Parada ${orden}`, latitud: lat, longitud: lng, orden_parada: orden })
 
-  if (lat && lng) { 
+  if (lat && lng) {
     redibujarTodosLosMarcadoresParadas()
-    map.panTo([parseFloat(lat), parseFloat(lng)]) 
+    map.panTo([parseFloat(lat), parseFloat(lng)])
   }
 }
 

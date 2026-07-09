@@ -61,9 +61,7 @@
           <button @click="loginRapido('capturista')" class="px-2 py-1.5 bg-gray-200">
             Capturista
           </button>
-          <button @click="loginRapido('consultor')" class="px-2 py-1.5 bg-gray-200">
-            Consultor
-          </button>
+
         </div>
       </div>
     </div>
@@ -78,22 +76,21 @@ const router = useRouter()
 const correo = ref('')
 const password = ref('')
 
-// Función para cuando den clic al botón normal
+
 const manejarLogin = () => {
-  // Por ahora lo mandamos al dashboard por defecto como "super"
+
   localStorage.setItem('user-rol', 'super')
   router.push('/dashboard')
 }
 
-// Función mágica para brincar directo al rol que quieras probar
 const loginRapido = (rol) => {
   localStorage.setItem('user-rol', rol)
   router.push('/dashboard')
 }
 </script>
-
+|
 <style scoped>
-/* Animación suave para que la tarjeta aparezca flotando hacia arriba */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
